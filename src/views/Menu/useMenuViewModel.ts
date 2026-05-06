@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { AxiosError } from 'axios';
 import { MenuViewModelType } from './types';
 import { getCryptoAPI } from '../../models/crypto/api/cryptoApi';
@@ -8,8 +10,13 @@ import {
   getCryptoCache,
   setCryptoCache,
 } from '../../models/crypto/storage/cryptoStorage';
+import { HomeStackNavigationProps } from '../../navigation/HomeStackNavigator/types';
+import { CryptoItem } from './components/CryptoListItem/types';
 
 const useMenuViewModel = (): MenuViewModelType => {
+  const navigation = useNavigation<HomeStackNavigationProps<'Menu'>>();
+  const isFocused = useIsFocused();
+
   const getCryptoData = async (
     signal?: AbortSignal,
   ): Promise<ResponseAPIType<CryptoAPIType[], AxiosError | Error>> => {
@@ -21,7 +28,20 @@ const useMenuViewModel = (): MenuViewModelType => {
     }
   };
 
-  return { getCryptoData, getCryptoCache, setCryptoCache };
+  const navigateToCryptoDetail = useCallback(
+    (item: CryptoItem) => {
+      navigation.navigate('CryptoDetail', { item });
+    },
+    [navigation],
+  );
+
+  return {
+    getCryptoData,
+    getCryptoCache,
+    setCryptoCache,
+    navigateToCryptoDetail,
+    isFocused,
+  };
 };
 
 export default useMenuViewModel;

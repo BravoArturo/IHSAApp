@@ -3,6 +3,7 @@ import { CryptoAPIType } from '../../models/crypto/api/types';
 import { ResponseAPIType } from '../../utils/typesResponse';
 import { ErrorConnectionPropsType } from '../components/ErrorConnection/types';
 import { InputFilterPropsType } from './components/InputFilter/types';
+import { CryptoItem } from './components/CryptoListItem/types';
 
 export type MenuViewProps = ErrorConnectionPropsType &
   InputFilterPropsType & {
@@ -20,4 +21,6 @@ export type MenuViewModelType = {
   ) => Promise<ResponseAPIType<CryptoAPIType[], AxiosError | Error>>;
   getCryptoCache: () => CryptoAPIType[] | undefined;
   setCryptoCache: (data: CryptoAPIType[]) => void;
+  navigateToCryptoDetail: (item: CryptoItem) => void;
+  isFocused: boolean;
 };

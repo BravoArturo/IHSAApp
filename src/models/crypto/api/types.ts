@@ -30,3 +30,18 @@ export type CryptoAPIType = {
   lastId: number;
   count: number;
 };
+
+export type KlineRawType = [
+  number, // openTime
+  string, // open
+  string, // high
+  string, // low
+  string, // close
+  string, // volume
+  number, // closeTime
+  string, // quoteAssetVolume
+  number, // numberOfTrades
+  string, // takerBuyBaseAssetVolume
+  string, // takerBuyQuoteAssetVolume
+  string, // unused
+];

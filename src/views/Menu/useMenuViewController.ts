@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { MenuViewProps } from './types';
 import useMenuViewModel from './useMenuViewModel';
@@ -9,7 +9,13 @@ const POLLING_INTERVAL_MS = 3000;
 const MAX_RETRIES = 3;
 
 const useMenuViewController = (): MenuViewProps => {
-  const { getCryptoData, getCryptoCache, setCryptoCache } = useMenuViewModel();
+  const {
+    getCryptoData,
+    getCryptoCache,
+    setCryptoCache,
+    navigateToCryptoDetail,
+    isFocused,
+  } = useMenuViewModel();
   const [cryptos, setCryptos] = useState<CryptoAPIType[]>(
     getCryptoCache() ?? [],
   );
@@ -36,7 +42,7 @@ const useMenuViewController = (): MenuViewProps => {
   }, []);
 
   useEffect(() => {
-    if (errorConnection || !isOnForeground) {
+    if (errorConnection || !isOnForeground || !isFocused) {
       return;
     }
     getAndSetData();
@@ -48,7 +54,7 @@ const useMenuViewController = (): MenuViewProps => {
       clearPollingInterval();
       errorCounterRef.current = 0;
     };
-  }, [errorConnection, isOnForeground]);
+  }, [errorConnection, isOnForeground, isFocused]);
 
   useEffect(() => {
     handleFilterData(cryptos, text);
@@ -134,10 +140,6 @@ const useMenuViewController = (): MenuViewProps => {
     handleChangeErrorConnection(false);
   };
 
-  const handlePressItem = useCallback(() => {
-    // TODO: navigate to detail screen
-  }, []);
-
   return {
     cryptos,
     cryptosFiltered,
@@ -145,7 +147,7 @@ const useMenuViewController = (): MenuViewProps => {
     isLoading,
     errorConnection,
     onPressRetry,
-    onPressItem: handlePressItem,
+    onPressItem: navigateToCryptoDetail,
     onChangeText: handleChangeText,
   };
 };

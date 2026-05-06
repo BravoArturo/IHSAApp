@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 import { MenuViewProps } from './types';
 import useMenuViewModel from './useMenuViewModel';
 import { CryptoAPIType } from '../../models/crypto/api/types';
@@ -13,8 +14,12 @@ const useMenuViewController = (): MenuViewProps => {
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorConnection, setErrorConnection] = useState<boolean>(false);
+  const [isOnForeground, setIsOnForeground] = useState<boolean>(
+    AppState.currentState === 'active',
+  );
   const errorCounterRef = useRef<number>(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const fetchControllerRef = useRef<AbortController | null>(null);
 
   const handleChangeCryptos = (value: CryptoAPIType[]) => {
     setCryptos(value);
@@ -29,15 +34,27 @@ const useMenuViewController = (): MenuViewProps => {
     setErrorConnection(value);
   };
 
+  const handleChangeIsOnForeground = (value: boolean) => {
+    setIsOnForeground(value);
+  };
+
   const clearPollingInterval = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
+    fetchControllerRef.current?.abort();
   };
 
   const getAndSetData = async () => {
-    const res = await getCryptoData();
+    fetchControllerRef.current?.abort();
+    const controller = new AbortController();
+    fetchControllerRef.current = controller;
+
+    const res = await getCryptoData(controller.signal);
+
+    if (controller.signal.aborted) return;
+
     if (res.message === 'success') {
       handleChangeCryptos(res.response);
       handleChangeIsLoading(false);
@@ -60,8 +77,22 @@ const useMenuViewController = (): MenuViewProps => {
     handleChangeErrorConnection(false);
   };
 
+  const handlePressItem = useCallback((item: CryptoAPIType) => {
+    console.log(item);
+  }, []);
+
   useEffect(() => {
-    if (errorConnection) {
+    const subscription = AppState.addEventListener(
+      'change',
+      (state: AppStateStatus) => {
+        handleChangeIsOnForeground(state === 'active');
+      },
+    );
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
+    if (errorConnection || !isOnForeground) {
       return;
     }
     getAndSetData();
@@ -73,9 +104,15 @@ const useMenuViewController = (): MenuViewProps => {
       clearPollingInterval();
       errorCounterRef.current = 0;
     };
-  }, [errorConnection]);
+  }, [errorConnection, isOnForeground]);
 
-  return { cryptos, isLoading, errorConnection, onPressRetry };
+  return {
+    cryptos,
+    isLoading,
+    errorConnection,
+    onPressRetry,
+    onPressItem: handlePressItem,
+  };
 };
 
 export default useMenuViewController;

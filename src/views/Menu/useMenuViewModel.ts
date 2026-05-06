@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import { MenuViewModelType } from './types';
 import { getCryptoAPI } from '../../models/crypto/api/cryptoApi';
 import { CryptoAPIType } from '../../models/crypto/api/types';
@@ -9,15 +10,14 @@ import {
 } from '../../models/crypto/storage/cryptoStorage';
 
 const useMenuViewModel = (): MenuViewModelType => {
-  const getCryptoData = async (): Promise<
-    ResponseAPIType<CryptoAPIType[], unknown>
-  > => {
-    //uso el unknown pq no tengo tiempo para probar todos los escenarios y posibles respuestas
+  const getCryptoData = async (
+    signal?: AbortSignal,
+  ): Promise<ResponseAPIType<CryptoAPIType[], AxiosError | Error>> => {
     try {
-      const response = await getCryptoAPI(SYMBOLS);
+      const response = await getCryptoAPI(SYMBOLS, signal);
       return { message: 'success', response };
     } catch (error) {
-      return { message: 'error', error };
+      return { message: 'error', error: error as AxiosError | Error };
     }
   };
 

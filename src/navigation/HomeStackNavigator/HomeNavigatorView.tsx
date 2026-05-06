@@ -7,7 +7,7 @@ const Stack = createStackNavigator<HomeStackParamList>();
 const HomeNavigatorView: React.FC<HomeNavigatorViewProps> = ({ routes }) => {
   return (
     <Stack.Navigator
-      initialRouteName={'Home'}
+      initialRouteName={'Menu'}
       screenOptions={{
         headerShown: false,
         gestureEnabled: true,

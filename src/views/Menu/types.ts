@@ -2,13 +2,17 @@ import { AxiosError } from 'axios';
 import { CryptoAPIType } from '../../models/crypto/api/types';
 import { ResponseAPIType } from '../../utils/typesResponse';
 import { ErrorConnectionPropsType } from '../components/ErrorConnection/types';
+import { InputFilterPropsType } from './components/InputFilter/types';
 
-export type MenuViewProps = ErrorConnectionPropsType & {
-  cryptos: CryptoAPIType[];
-  isLoading: boolean;
-  errorConnection: boolean;
-  onPressItem: (item: CryptoAPIType) => void;
-};
+export type MenuViewProps = ErrorConnectionPropsType &
+  InputFilterPropsType & {
+    cryptos: CryptoAPIType[];
+    cryptosFiltered: CryptoAPIType[];
+    text: string;
+    isLoading: boolean;
+    errorConnection: boolean;
+    onPressItem: (item: CryptoAPIType) => void;
+  };
 
 export type MenuViewModelType = {
   getCryptoData: (

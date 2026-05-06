@@ -1,10 +1,9 @@
-import React from 'react';
-import { ResponseType } from '../../models/types';
 import { AppNavigatorViewModelType } from './types';
-import { Platform } from 'react-native';
+import { useIsOnline } from '../../models/app/state/hook/useIsOnline';
 
 function useAppNavigatorViewModel(): AppNavigatorViewModelType {
-  return {};
+  const { isOnline } = useIsOnline();
+  return { isOnline };
 }
 
 export default useAppNavigatorViewModel;

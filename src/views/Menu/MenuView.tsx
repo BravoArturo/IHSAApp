@@ -3,13 +3,18 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { MenuViewProps } from './types';
 import ErrorConnection from '../components/ErrorConnection/ErrorConnection';
 import CryptoList from './components/CryptoList/CryptoList';
+import InputFilter from './components/InputFilter/InputFilter';
+import NoData from './components/NoData/NoData';
 
 const MenuView: React.FC<MenuViewProps> = ({
   cryptos,
+  cryptosFiltered,
+  text,
   isLoading,
   errorConnection,
   onPressRetry,
   onPressItem,
+  onChangeText,
 }) => {
   if (errorConnection) {
     return <ErrorConnection onPressRetry={onPressRetry} />;
@@ -23,7 +28,19 @@ const MenuView: React.FC<MenuViewProps> = ({
     );
   }
 
-  return <CryptoList cryptos={cryptos} onPressItem={onPressItem} />;
+  return (
+    <>
+      <InputFilter onChangeText={onChangeText} />
+      {text !== '' && cryptosFiltered.length === 0 ? (
+        <NoData />
+      ) : (
+        <CryptoList
+          cryptos={cryptosFiltered.length !== 0 ? cryptosFiltered : cryptos}
+          onPressItem={onPressItem}
+        />
+      )}
+    </>
+  );
 };
 
 const styles = StyleSheet.create({

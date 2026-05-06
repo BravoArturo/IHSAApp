@@ -1,5 +1,7 @@
-import { ResponseType } from '../../models/types';
+export type AppNavigatorViewModelType = {
+  isOnline: boolean;
+};
 
-export type AppNavigatorViewModelType = {};
-
-export type AppNavigatorViewProps = void;
+export type AppNavigatorViewProps = {
+  isOnline: boolean;
+};

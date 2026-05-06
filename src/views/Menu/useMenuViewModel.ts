@@ -3,6 +3,10 @@ import { getCryptoAPI } from '../../models/crypto/api/cryptoApi';
 import { CryptoAPIType } from '../../models/crypto/api/types';
 import { SYMBOLS } from '../../models/crypto/constants/cryptoConstants';
 import { ResponseAPIType } from '../../utils/typesResponse';
+import {
+  getCryptoCache,
+  setCryptoCache,
+} from '../../models/crypto/storage/cryptoStorage';
 
 const useMenuViewModel = (): MenuViewModelType => {
   const getCryptoData = async (): Promise<
@@ -17,7 +21,7 @@ const useMenuViewModel = (): MenuViewModelType => {
     }
   };
 
-  return { getCryptoData };
+  return { getCryptoData, getCryptoCache, setCryptoCache };
 };
 
 export default useMenuViewModel;

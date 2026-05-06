@@ -7,8 +7,10 @@ const POLLING_INTERVAL_MS = 3000;
 const MAX_RETRIES = 3;
 
 const useMenuViewController = (): MenuViewProps => {
-  const { getCryptoData } = useMenuViewModel();
-  const [cryptos, setCryptos] = useState<CryptoAPIType[]>([]);
+  const { getCryptoData, getCryptoCache, setCryptoCache } = useMenuViewModel();
+  const [cryptos, setCryptos] = useState<CryptoAPIType[]>(
+    getCryptoCache() ?? [],
+  );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorConnection, setErrorConnection] = useState<boolean>(false);
   const errorCounterRef = useRef<number>(0);
@@ -16,6 +18,7 @@ const useMenuViewController = (): MenuViewProps => {
 
   const handleChangeCryptos = (value: CryptoAPIType[]) => {
     setCryptos(value);
+    setCryptoCache(value);
   };
 
   const handleChangeIsLoading = (value: boolean) => {

@@ -4,6 +4,7 @@ import { MenuViewProps } from './types';
 import ErrorConnection from '../components/ErrorConnection/ErrorConnection';
 
 const MenuView: React.FC<MenuViewProps> = ({
+  cryptos,
   isLoading,
   errorConnection,
   onPressRetry,
@@ -12,7 +13,7 @@ const MenuView: React.FC<MenuViewProps> = ({
     return <ErrorConnection onPressRetry={onPressRetry} />;
   }
 
-  if (isLoading) {
+  if (isLoading && cryptos.length === 0) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" />

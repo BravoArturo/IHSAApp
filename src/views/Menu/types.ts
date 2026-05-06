@@ -10,4 +10,6 @@ export type MenuViewProps = ErrorConnectionPropsType & {
 
 export type MenuViewModelType = {
   getCryptoData: () => Promise<ResponseAPIType<CryptoAPIType[], unknown>>;
+  getCryptoCache: () => CryptoAPIType[] | undefined;
+  setCryptoCache: (data: CryptoAPIType[]) => void;
 };

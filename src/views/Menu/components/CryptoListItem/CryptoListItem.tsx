@@ -9,7 +9,7 @@ const CryptoListItem: React.FC<CryptoListItemPropsType> = ({
 }) => {
   const change = Number(item.priceChangePercent);
   const isPositive = !Number.isNaN(change) && change >= 0;
-  const changeColor = isPositive ? '#0ECB81' : '#F6465D';
+  const changeColor = isPositive ? '#10B981' : '#F6465D';
 
   return (
     <Pressable style={styles.container} onPress={() => onPress(item)}>
@@ -43,7 +43,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F1F3',
   },
   cell: {
     flex: 1,

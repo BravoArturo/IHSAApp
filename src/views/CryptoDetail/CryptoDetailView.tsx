@@ -63,7 +63,7 @@ const CryptoDetailView: React.FC<CryptoDetailViewProps> = ({
               style={[
                 styles.statValue,
                 {
-                  color: stats.variation >= 0 ? '#0ECB81' : '#F6465D',
+                  color: stats.variation >= 0 ? '#10B981' : '#F6465D',
                 },
               ]}
             >
@@ -93,12 +93,22 @@ const CryptoDetailView: React.FC<CryptoDetailViewProps> = ({
   );
 };
 
+const cardShadow = {
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 1 },
+  shadowOpacity: 0.04,
+  shadowRadius: 8,
+  elevation: 2,
+};
+
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#F7F8FA',
+  },
   header: {
     paddingBottom: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E7EB',
     marginBottom: 12,
   },
   eyebrow: {
@@ -115,11 +125,12 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   liveBar: {
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    backgroundColor: '#F5F6F8',
-    borderRadius: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
     marginBottom: 16,
+    ...cardShadow,
   },
   liveLabelRow: {
     flexDirection: 'row',
@@ -130,7 +141,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#0ECB81',
+    backgroundColor: '#10B981',
   },
   liveLabel: {
     fontSize: 12,
@@ -144,7 +155,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   chartHeader: {
-    marginBottom: 8,
+    marginBottom: 10,
   },
   chartTitle: {
     fontSize: 15,
@@ -158,12 +169,12 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
-    paddingVertical: 10,
-    paddingHorizontal: 4,
-    marginBottom: 8,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#E5E7EB',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    ...cardShadow,
   },
   statCell: {
     flex: 1,

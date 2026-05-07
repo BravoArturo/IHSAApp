@@ -12,8 +12,8 @@ import { SkeletonChartPropType } from './types';
 const PULSE_DURATION_MS = 500;
 const OPACITY_MIN = 0.3;
 const OPACITY_MAX = 1;
-const COLOR_FROM = '#3B82F6';
-const COLOR_TO = '#A855F7';
+const COLOR_FROM = '#D1FAE5';
+const COLOR_TO = '#A7F3D0';
 
 const SkeletonChart: React.FC<SkeletonChartPropType> = () => {
   const progress = useSharedValue(0);

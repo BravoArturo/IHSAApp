@@ -10,7 +10,9 @@ const Chart: React.FC<ChartPropsType> = ({
   return (
     <LineChart.Provider data={klines}>
       <LineChart width={widthChart} height={heightChart}>
-        <LineChart.Path />
+        <LineChart.Path color="#10B981" width={2}>
+          <LineChart.Gradient />
+        </LineChart.Path>
       </LineChart>
     </LineChart.Provider>
   );

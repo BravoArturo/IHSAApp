@@ -32,7 +32,7 @@ const MenuView: React.FC<MenuViewProps> = ({
   }
 
   return (
-    <>
+    <View style={styles.screen}>
       <View style={styles.screenHeader}>
         <Text style={styles.screenTitle}>Binance API</Text>
         <Text style={styles.screenSubtitle}>Mercado de criptomonedas</Text>
@@ -45,30 +45,36 @@ const MenuView: React.FC<MenuViewProps> = ({
         <SortToggle valueToggle={valueToggle} onToggle={onToggle} />
       </View>
 
-      <View style={styles.tableHeader}>
-        <Text style={styles.tableHeaderCell}>Par</Text>
-        <Text style={styles.tableHeaderCell}>Precio</Text>
-        <Text style={styles.tableHeaderCell}>24h %</Text>
-        <View style={styles.tableHeaderSpacer} />
-      </View>
-
       {text !== '' && cryptosFiltered.length === 0 ? (
         <NoData />
       ) : (
-        <CryptoList
-          cryptos={cryptosFiltered.length !== 0 ? cryptosFiltered : cryptos}
-          onPressItem={onPressItem}
-        />
+        <View style={styles.listCard}>
+          <View style={styles.tableHeader}>
+            <Text style={styles.tableHeaderCell}>Par</Text>
+            <Text style={styles.tableHeaderCell}>Precio</Text>
+            <Text style={styles.tableHeaderCell}>24h %</Text>
+            <View style={styles.tableHeaderSpacer} />
+          </View>
+          <CryptoList
+            cryptos={cryptosFiltered.length !== 0 ? cryptosFiltered : cryptos}
+            onPressItem={onPressItem}
+          />
+        </View>
       )}
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#F7F8FA',
+  },
   center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#F7F8FA',
   },
   screenHeader: {
     paddingHorizontal: 16,
@@ -95,14 +101,27 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flex: 1,
   },
+  listCard: {
+    flex: 1,
+    marginHorizontal: 12,
+    marginBottom: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
   tableHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: '#F5F6F8',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#D1D5DB',
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F1F3',
   },
   tableHeaderCell: {
     flex: 1,

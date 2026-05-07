@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { MenuViewProps } from './types';
 import ErrorConnection from '../components/ErrorConnection/ErrorConnection';
 import CryptoList from './components/CryptoList/CryptoList';
@@ -33,12 +33,25 @@ const MenuView: React.FC<MenuViewProps> = ({
 
   return (
     <>
+      <View style={styles.screenHeader}>
+        <Text style={styles.screenTitle}>Binance API</Text>
+        <Text style={styles.screenSubtitle}>Mercado de criptomonedas</Text>
+      </View>
+
       <View style={styles.row}>
         <View style={styles.inputWrapper}>
           <InputFilter onChangeText={onChangeText} />
         </View>
         <SortToggle valueToggle={valueToggle} onToggle={onToggle} />
       </View>
+
+      <View style={styles.tableHeader}>
+        <Text style={styles.tableHeaderCell}>Par</Text>
+        <Text style={styles.tableHeaderCell}>Precio</Text>
+        <Text style={styles.tableHeaderCell}>24h %</Text>
+        <View style={styles.tableHeaderSpacer} />
+      </View>
+
       {text !== '' && cryptosFiltered.length === 0 ? (
         <NoData />
       ) : (
@@ -57,6 +70,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  screenHeader: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  screenTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#111',
+  },
+  screenSubtitle: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginTop: 2,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -66,6 +94,26 @@ const styles = StyleSheet.create({
   },
   inputWrapper: {
     flex: 1,
+  },
+  tableHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#F5F6F8',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#D1D5DB',
+  },
+  tableHeaderCell: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6B7280',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  tableHeaderSpacer: {
+    width: 16,
   },
 });
 

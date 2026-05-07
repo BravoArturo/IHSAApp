@@ -4,7 +4,10 @@ import { InputFilterPropsType } from './types';
 
 const InputFilter: React.FC<InputFilterPropsType> = ({ onChangeText }) => {
   return (
-    <TextInput placeholder="filtrar por symbol" onChangeText={onChangeText} />
+    <TextInput
+      placeholder="Buscar par (ej. BTCUSDT)"
+      onChangeText={onChangeText}
+    />
   );
 };
 

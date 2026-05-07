@@ -11,6 +11,12 @@ export type KlinePointType = {
   value: number;
 };
 
+export type ChartStatsType = {
+  max: number;
+  min: number;
+  variation: number;
+};
+
 export type CryptoDetailViewProps = ErrorConnectionPropsType &
   ChartPropsType &
   ChartContainerPropType & {
@@ -19,6 +25,7 @@ export type CryptoDetailViewProps = ErrorConnectionPropsType &
     chartError: boolean;
     livePrice: string | null;
     errorConnection: boolean;
+    stats: ChartStatsType | null;
   };
 
 export type CryptoDetailViewModelType = {

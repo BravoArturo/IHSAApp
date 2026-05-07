@@ -1,6 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import { CryptoDetailViewProps, KlinePointType } from './types';
+import {
+  ChartStatsType,
+  CryptoDetailViewProps,
+  KlinePointType,
+} from './types';
 import useCryptoDetailViewModel from './useCryptoDetailViewModel';
 import { parseKlines } from '../../utils/klines/parseKlines';
 
@@ -73,6 +77,17 @@ const useCryptoDetailViewController = (): CryptoDetailViewProps => {
     };
   }, []);
 
+  const stats = useMemo<ChartStatsType | null>(() => {
+    if (klines.length === 0) return null;
+    const values = klines.map(k => k.value);
+    const max = Math.max(...values);
+    const min = Math.min(...values);
+    const first = klines[0].value;
+    const last = klines[klines.length - 1].value;
+    const variation = first === 0 ? 0 : ((last - first) / first) * 100;
+    return { max, min, variation };
+  }, [klines]);
+
   return {
     item: params.item,
     klines,
@@ -84,6 +99,7 @@ const useCryptoDetailViewController = (): CryptoDetailViewProps => {
     widthChart,
     heightChart,
     onLayoutChart,
+    stats,
   };
 };
 

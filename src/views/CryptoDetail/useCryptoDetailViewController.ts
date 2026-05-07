@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent } from 'react-native';
-import {
-  ChartStatsType,
-  CryptoDetailViewProps,
-  KlinePointType,
-} from './types';
+import { ChartStatsType, CryptoDetailViewProps, KlinePointType } from './types';
 import useCryptoDetailViewModel from './useCryptoDetailViewModel';
 import { parseKlines } from '../../utils/klines/parseKlines';
 
@@ -65,7 +61,7 @@ const useCryptoDetailViewController = (): CryptoDetailViewProps => {
     }
     setTimeout(() => {
       handleChangeIsChartLoading(false);
-    }, 5000);
+    }, 2500);
   };
 
   useEffect(() => {

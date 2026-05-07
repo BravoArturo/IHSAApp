@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import ErrorBoundary from 'react-native-error-boundary';
 import { CryptoDetailViewProps } from './types';
 import Chart from './components/Chart/Chart';
 import ChartContainer from './components/ChartContainer/ChartContainer';
 import SkeletonChart from './components/SkeletonChart/SkeletonChart';
+import ErrorChart from './components/ErrorChart/ErrorChart';
 import ErrorConnection from '../components/ErrorConnection/ErrorConnection';
 
 const CryptoDetailView: React.FC<CryptoDetailViewProps> = ({
@@ -80,11 +82,13 @@ const CryptoDetailView: React.FC<CryptoDetailViewProps> = ({
             <Text>Error al cargar el gráfico</Text>
           </View>
         ) : !isChartLoading && widthChart > 0 && heightChart > 0 ? (
-          <Chart
-            klines={klines}
-            widthChart={widthChart}
-            heightChart={heightChart}
-          />
+          <ErrorBoundary FallbackComponent={ErrorChart}>
+            <Chart
+              klines={klines}
+              widthChart={widthChart}
+              heightChart={heightChart}
+            />
+          </ErrorBoundary>
         ) : (
           <SkeletonChart />
         )}

@@ -21,6 +21,7 @@
     "axios": "^1.13.2",
     "react": "19.1.1",
     "react-native": "0.82.1",
+    "react-native-error-boundary": "^3.1.0",
     "react-native-gesture-handler": "^2.29.1",
     "react-native-haptic-feedback": "^3.0.0",
     "react-native-mmkv": "^4.1.0",

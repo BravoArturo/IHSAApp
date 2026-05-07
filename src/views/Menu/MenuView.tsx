@@ -5,6 +5,7 @@ import ErrorConnection from '../components/ErrorConnection/ErrorConnection';
 import CryptoList from './components/CryptoList/CryptoList';
 import InputFilter from './components/InputFilter/InputFilter';
 import NoData from './components/NoData/NoData';
+import SortToggle from './components/SortToggle/SortToggle';
 
 const MenuView: React.FC<MenuViewProps> = ({
   cryptos,
@@ -12,6 +13,8 @@ const MenuView: React.FC<MenuViewProps> = ({
   text,
   isLoading,
   errorConnection,
+  valueToggle,
+  onToggle,
   onPressRetry,
   onPressItem,
   onChangeText,
@@ -30,7 +33,12 @@ const MenuView: React.FC<MenuViewProps> = ({
 
   return (
     <>
-      <InputFilter onChangeText={onChangeText} />
+      <View style={styles.row}>
+        <View style={styles.inputWrapper}>
+          <InputFilter onChangeText={onChangeText} />
+        </View>
+        <SortToggle valueToggle={valueToggle} onToggle={onToggle} />
+      </View>
       {text !== '' && cryptosFiltered.length === 0 ? (
         <NoData />
       ) : (
@@ -48,6 +56,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    gap: 12,
+  },
+  inputWrapper: {
+    flex: 1,
   },
 });
 

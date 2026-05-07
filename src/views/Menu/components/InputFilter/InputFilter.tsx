@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { TextInput } from 'react-native';
 import { InputFilterPropsType } from './types';
 
@@ -8,4 +8,4 @@ const InputFilter: React.FC<InputFilterPropsType> = ({ onChangeText }) => {
   );
 };
 
-export default InputFilter;
+export default memo(InputFilter);

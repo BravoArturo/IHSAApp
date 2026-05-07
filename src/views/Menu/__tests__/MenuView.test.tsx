@@ -17,6 +17,8 @@ const buildProps = (overrides: Partial<MenuViewProps> = {}): MenuViewProps => ({
   text: '',
   isLoading: false,
   errorConnection: false,
+  valueToggle: false,
+  onToggle: jest.fn(),
   onPressRetry: jest.fn(),
   onPressItem: jest.fn(),
   onChangeText: jest.fn(),

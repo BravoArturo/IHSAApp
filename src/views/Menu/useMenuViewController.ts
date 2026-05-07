@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { MenuViewProps } from './types';
 import useMenuViewModel from './useMenuViewModel';
 import { CryptoAPIType } from '../../models/crypto/api/types';
 import { filterCryptos } from '../../utils/filter/filterCryptos';
+import { sortAlphabetically } from '../../utils/sort/sortAlphabetically';
 
 const POLLING_INTERVAL_MS = 3000;
 const MAX_RETRIES = 3;
@@ -21,6 +22,7 @@ const useMenuViewController = (): MenuViewProps => {
   );
   const [cryptosFiltered, setCryptosFiltered] = useState<CryptoAPIType[]>([]);
   const [text, setText] = useState<string>('');
+  const [alphabetical, setAlphabetical] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorConnection, setErrorConnection] = useState<boolean>(false);
   const [isOnForeground, setIsOnForeground] = useState<boolean>(
@@ -57,8 +59,8 @@ const useMenuViewController = (): MenuViewProps => {
   }, [errorConnection, isOnForeground, isFocused]);
 
   useEffect(() => {
-    handleFilterData(cryptos, text);
-  }, [cryptos, text]);
+    handleFilterData(cryptos, text, alphabetical);
+  }, [cryptos, text, alphabetical]);
 
   useEffect(() => {
     return () => {
@@ -89,17 +91,27 @@ const useMenuViewController = (): MenuViewProps => {
     setCryptosFiltered(value);
   };
 
-  const handleChangeText = (value: string) => {
+  const handleChangeText = useCallback((value: string) => {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
     debounceRef.current = setTimeout(() => {
       setText(value);
     }, 500);
-  };
+  }, []);
 
-  const handleFilterData = (cryptos: CryptoAPIType[], text: string) => {
-    handleChangeCryptosFiltered(filterCryptos(cryptos, text));
+  const handleChangeAlphabetical = useCallback((value: boolean) => {
+    setAlphabetical(value);
+  }, []);
+
+  const handleFilterData = (
+    cryptos: CryptoAPIType[],
+    text: string,
+    alphabetical: boolean,
+  ) => {
+    const filtered = filterCryptos(cryptos, text);
+    const base = text === '' ? cryptos : filtered;
+    handleChangeCryptosFiltered(sortAlphabetically(base, alphabetical));
   };
 
   const clearPollingInterval = () => {
@@ -146,6 +158,8 @@ const useMenuViewController = (): MenuViewProps => {
     text,
     isLoading,
     errorConnection,
+    valueToggle: alphabetical,
+    onToggle: handleChangeAlphabetical,
     onPressRetry,
     onPressItem: navigateToCryptoDetail,
     onChangeText: handleChangeText,

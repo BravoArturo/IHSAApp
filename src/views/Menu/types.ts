@@ -4,9 +4,11 @@ import { ResponseAPIType } from '../../utils/typesResponse';
 import { ErrorConnectionPropsType } from '../components/ErrorConnection/types';
 import { InputFilterPropsType } from './components/InputFilter/types';
 import { CryptoItem } from './components/CryptoListItem/types';
+import { SortTogglePropsType } from './components/SortToggle/types';
 
 export type MenuViewProps = ErrorConnectionPropsType &
-  InputFilterPropsType & {
+  InputFilterPropsType &
+  SortTogglePropsType & {
     cryptos: CryptoAPIType[];
     cryptosFiltered: CryptoAPIType[];
     text: string;

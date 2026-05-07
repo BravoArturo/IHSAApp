@@ -19,6 +19,8 @@ const mockViewModel = (
     getCryptoData,
     getCryptoCache: jest.fn(() => cache),
     setCryptoCache: jest.fn(),
+    navigateToCryptoDetail: jest.fn(),
+    isFocused: true,
   });
 };
 
@@ -65,11 +67,9 @@ describe('useMenuViewController', () => {
       expect(getCryptoData).toHaveBeenCalledTimes(3);
     });
 
-    await act(async () => {
-      await Promise.resolve();
+    await waitFor(() => {
+      expect(result.current.errorConnection).toBe(true);
     });
-
-    expect(result.current.errorConnection).toBe(true);
   });
 
   it('resets errorConnection when onPressRetry is called', async () => {
@@ -81,12 +81,8 @@ describe('useMenuViewController', () => {
     const { result } = renderHook(() => useMenuViewController());
 
     await waitFor(() => {
-      expect(getCryptoData).toHaveBeenCalledTimes(3);
+      expect(result.current.errorConnection).toBe(true);
     });
-    await act(async () => {
-      await Promise.resolve();
-    });
-    expect(result.current.errorConnection).toBe(true);
 
     getCryptoData.mockResolvedValue({
       message: 'success',
@@ -115,7 +111,8 @@ describe('useMenuViewController', () => {
     expect(result.current.cryptos).toEqual(cached);
   });
 
-  it('exposes onChangeText that updates the text state', () => {
+  it('exposes onChangeText that updates the text state after debounce', () => {
+    jest.useFakeTimers();
     const getCryptoData = jest.fn(() => new Promise(() => {}));
     mockViewModel(getCryptoData);
 
@@ -127,6 +124,57 @@ describe('useMenuViewController', () => {
       result.current.onChangeText('btc');
     });
 
+    expect(result.current.text).toBe('');
+
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
     expect(result.current.text).toBe('btc');
+  });
+
+  it('exposes valueToggle=false initially and updates when onToggle is called', () => {
+    const getCryptoData = jest.fn(() => new Promise(() => {}));
+    mockViewModel(getCryptoData);
+
+    const { result } = renderHook(() => useMenuViewController());
+
+    expect(result.current.valueToggle).toBe(false);
+
+    act(() => {
+      result.current.onToggle(true);
+    });
+
+    expect(result.current.valueToggle).toBe(true);
+  });
+
+  it('sorts cryptosFiltered alphabetically when valueToggle is true and text is empty', async () => {
+    const fakeData = [
+      makeCrypto('ETHUSDT'),
+      makeCrypto('BTCUSDT'),
+      makeCrypto('ADAUSDT'),
+    ];
+    const getCryptoData = jest
+      .fn()
+      .mockResolvedValue({ message: 'success', response: fakeData });
+    mockViewModel(getCryptoData);
+
+    const { result } = renderHook(() => useMenuViewController());
+
+    await waitFor(() => {
+      expect(result.current.cryptos).toEqual(fakeData);
+    });
+
+    act(() => {
+      result.current.onToggle(true);
+    });
+
+    await waitFor(() => {
+      expect(result.current.cryptosFiltered.map(c => c.symbol)).toEqual([
+        'ADAUSDT',
+        'BTCUSDT',
+        'ETHUSDT',
+      ]);
+    });
   });
 });

@@ -24,6 +24,9 @@ const CryptoList: React.FC<CryptoListPropsType> = ({
         data={cryptos}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
+        maintainVisibleContentPosition={{
+          autoscrollToTopThreshold: 0,
+        }}
       />
     </View>
   );

@@ -10,6 +10,7 @@ jest.mock('../../../models/crypto/storage/cryptoStorage', () => ({
 import { getCryptoAPI } from '../../../models/crypto/api/cryptoApi';
 import useMenuViewModel from '../useMenuViewModel';
 import { CryptoAPIType } from '../../../models/crypto/api/types';
+import { useAppStateStore } from '../../../models/app/state/store/appStateStore';
 
 const getCryptoAPIMock = getCryptoAPI as jest.Mock;
 
@@ -80,6 +81,24 @@ describe('useMenuViewModel', () => {
       } else {
         throw new Error('expected error response');
       }
+    });
+  });
+
+  describe('app state integration', () => {
+    it('exposes isOnForeground from the app state store', () => {
+      useAppStateStore.setState({ isOnForeground: false });
+
+      const { result } = renderHook(() => useMenuViewModel());
+
+      expect(result.current.isOnForeground).toBe(false);
+    });
+
+    it('exposes isFocused from navigation', () => {
+      useAppStateStore.setState({ isOnForeground: true });
+
+      const { result } = renderHook(() => useMenuViewModel());
+
+      expect(result.current.isFocused).toBe(true);
     });
   });
 });

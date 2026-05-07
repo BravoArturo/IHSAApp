@@ -21,6 +21,7 @@ const mockViewModel = (
     setCryptoCache: jest.fn(),
     navigateToCryptoDetail: jest.fn(),
     isFocused: true,
+    isOnForeground: true,
   });
 };
 
@@ -36,7 +37,7 @@ describe('useMenuViewController', () => {
     jest.useRealTimers();
   });
 
-  it('populates cryptos and turns off loading on successful fetch', async () => {
+  it('populates cryptosFiltered and turns off loading on successful fetch', async () => {
     const fakeData = [makeCrypto('BTCUSDT'), makeCrypto('ETHUSDT')];
     const getCryptoData = jest
       .fn()
@@ -46,12 +47,12 @@ describe('useMenuViewController', () => {
     const { result } = renderHook(() => useMenuViewController());
 
     expect(result.current.isLoading).toBe(true);
-    expect(result.current.cryptos).toEqual([]);
+    expect(result.current.cryptosFiltered).toEqual([]);
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
-    expect(result.current.cryptos).toEqual(fakeData);
+    expect(result.current.cryptosFiltered).toEqual(fakeData);
   });
 
   it('sets errorConnection=true after MAX_RETRIES (3) consecutive failures', async () => {
@@ -97,18 +98,20 @@ describe('useMenuViewController', () => {
       expect(result.current.errorConnection).toBe(false);
     });
     await waitFor(() => {
-      expect(result.current.cryptos).toEqual([makeCrypto('BTCUSDT')]);
+      expect(result.current.cryptosFiltered).toEqual([makeCrypto('BTCUSDT')]);
     });
   });
 
-  it('uses cached cryptos as initial state when cache exists', () => {
+  it('uses cached cryptos as initial state when cache exists', async () => {
     const cached = [makeCrypto('CACHEDUSDT')];
     const getCryptoData = jest.fn(() => new Promise(() => {}));
     mockViewModel(getCryptoData, cached);
 
     const { result } = renderHook(() => useMenuViewController());
 
-    expect(result.current.cryptos).toEqual(cached);
+    await waitFor(() => {
+      expect(result.current.cryptosFiltered).toEqual(cached);
+    });
   });
 
   it('exposes onChangeText that updates the text state after debounce', () => {
@@ -162,7 +165,7 @@ describe('useMenuViewController', () => {
     const { result } = renderHook(() => useMenuViewController());
 
     await waitFor(() => {
-      expect(result.current.cryptos).toEqual(fakeData);
+      expect(result.current.cryptosFiltered).toEqual(fakeData);
     });
 
     act(() => {
@@ -176,5 +179,14 @@ describe('useMenuViewController', () => {
         'ETHUSDT',
       ]);
     });
+  });
+
+  it('exposes onEndReached as a function', () => {
+    const getCryptoData = jest.fn(() => new Promise(() => {}));
+    mockViewModel(getCryptoData);
+
+    const { result } = renderHook(() => useMenuViewController());
+
+    expect(typeof result.current.onEndReached).toBe('function');
   });
 });

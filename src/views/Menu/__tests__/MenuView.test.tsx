@@ -12,7 +12,6 @@ const makeCrypto = (symbol: string): CryptoAPIType =>
   } as CryptoAPIType);
 
 const buildProps = (overrides: Partial<MenuViewProps> = {}): MenuViewProps => ({
-  cryptos: [],
   cryptosFiltered: [],
   text: '',
   isLoading: false,
@@ -22,6 +21,7 @@ const buildProps = (overrides: Partial<MenuViewProps> = {}): MenuViewProps => ({
   onPressRetry: jest.fn(),
   onPressItem: jest.fn(),
   onChangeText: jest.fn(),
+  onEndReached: jest.fn(),
   ...overrides,
 });
 
@@ -46,7 +46,7 @@ describe('MenuView', () => {
     expect(onPressRetry).toHaveBeenCalledTimes(1);
   });
 
-  it('renders ActivityIndicator when loading and cryptos is empty', () => {
+  it('renders ActivityIndicator when loading and cryptosFiltered is empty', () => {
     const { UNSAFE_getByType } = render(
       <MenuView {...buildProps({ isLoading: true })} />,
     );
@@ -60,7 +60,6 @@ describe('MenuView', () => {
       <MenuView
         {...buildProps({
           text: 'XYZ',
-          cryptos: [makeCrypto('BTCUSDT')],
           cryptosFiltered: [],
         })}
       />,
@@ -69,10 +68,10 @@ describe('MenuView', () => {
     expect(getByText('no data')).toBeTruthy();
   });
 
-  it('renders CryptoList with all items when text is empty', () => {
-    const cryptos = [makeCrypto('BTCUSDT'), makeCrypto('ETHUSDT')];
+  it('renders all items from cryptosFiltered when text is empty', () => {
+    const cryptosFiltered = [makeCrypto('BTCUSDT'), makeCrypto('ETHUSDT')];
     const { getByText } = render(
-      <MenuView {...buildProps({ cryptos, cryptosFiltered: [] })} />,
+      <MenuView {...buildProps({ cryptosFiltered })} />,
     );
 
     expect(getByText('BTCUSDT')).toBeTruthy();
@@ -83,7 +82,6 @@ describe('MenuView', () => {
     const { getByText, queryByText } = render(
       <MenuView
         {...buildProps({
-          cryptos: [makeCrypto('BTCUSDT'), makeCrypto('ETHUSDT')],
           cryptosFiltered: [makeCrypto('BTCUSDT')],
           text: 'btc',
         })}
@@ -100,7 +98,10 @@ describe('MenuView', () => {
       <MenuView {...buildProps({ onChangeText })} />,
     );
 
-    fireEvent.changeText(getByPlaceholderText('filtrar por symbol'), 'btc');
+    fireEvent.changeText(
+      getByPlaceholderText('Buscar par (ej. BTCUSDT)'),
+      'btc',
+    );
 
     expect(onChangeText).toHaveBeenCalledWith('btc');
   });
@@ -109,7 +110,7 @@ describe('MenuView', () => {
     const onPressItem = jest.fn();
     const crypto = makeCrypto('BTCUSDT');
     const { getByText } = render(
-      <MenuView {...buildProps({ cryptos: [crypto], onPressItem })} />,
+      <MenuView {...buildProps({ cryptosFiltered: [crypto], onPressItem })} />,
     );
 
     fireEvent.press(getByText('BTCUSDT'));

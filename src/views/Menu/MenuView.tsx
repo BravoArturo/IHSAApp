@@ -8,7 +8,6 @@ import NoData from './components/NoData/NoData';
 import SortToggle from './components/SortToggle/SortToggle';
 
 const MenuView: React.FC<MenuViewProps> = ({
-  cryptos,
   cryptosFiltered,
   text,
   isLoading,
@@ -18,12 +17,13 @@ const MenuView: React.FC<MenuViewProps> = ({
   onPressRetry,
   onPressItem,
   onChangeText,
+  onEndReached,
 }) => {
   if (errorConnection) {
     return <ErrorConnection onPressRetry={onPressRetry} />;
   }
 
-  if (isLoading && cryptos.length === 0) {
+  if (isLoading && cryptosFiltered.length === 0) {
     return (
       <View style={styles.center}>
         <ActivityIndicator size="large" />
@@ -56,8 +56,9 @@ const MenuView: React.FC<MenuViewProps> = ({
             <View style={styles.tableHeaderSpacer} />
           </View>
           <CryptoList
-            cryptos={cryptosFiltered.length !== 0 ? cryptosFiltered : cryptos}
+            cryptos={cryptosFiltered}
             onPressItem={onPressItem}
+            onEndReached={onEndReached}
           />
         </View>
       )}

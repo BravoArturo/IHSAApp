@@ -9,12 +9,12 @@ import { SortTogglePropsType } from './components/SortToggle/types';
 export type MenuViewProps = ErrorConnectionPropsType &
   InputFilterPropsType &
   SortTogglePropsType & {
-    cryptos: CryptoAPIType[];
     cryptosFiltered: CryptoAPIType[];
     text: string;
     isLoading: boolean;
     errorConnection: boolean;
     onPressItem: (item: CryptoAPIType) => void;
+    onEndReached: () => void;
   };
 
 export type MenuViewModelType = {
@@ -25,4 +25,5 @@ export type MenuViewModelType = {
   setCryptoCache: (data: CryptoAPIType[]) => void;
   navigateToCryptoDetail: (item: CryptoItem) => void;
   isFocused: boolean;
+  isOnForeground: boolean;
 };

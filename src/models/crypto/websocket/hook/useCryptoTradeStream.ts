@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
 import { useAppStateStore } from '../../../app/state/store/appStateStore';
 import { BinanceTradeEvent, UseCryptoTradeStreamReturn } from '../types';
 import {
@@ -10,7 +11,12 @@ import {
 export function useCryptoTradeStream(
   symbol: string,
 ): UseCryptoTradeStreamReturn {
-  const isOnline = useAppStateStore(state => state.isOnline);
+  const { isOnline, isOnForeground } = useAppStateStore(
+    useShallow(state => ({
+      isOnline: state.isOnline,
+      isOnForeground: state.isOnForeground,
+    })),
+  );
   const [livePrice, setLivePrice] = useState<string | null>(null);
   const [errorConnection, setErrorConnection] = useState<boolean>(false);
   const wsRef = useRef<WebSocket | null>(null);
@@ -33,7 +39,7 @@ export function useCryptoTradeStream(
   }, [handleChangeErrorConnection]);
 
   useEffect(() => {
-    if (!symbol || !isOnline || errorConnection) {
+    if (!symbol || !isOnline || !isOnForeground || errorConnection) {
       return;
     }
 
@@ -95,6 +101,7 @@ export function useCryptoTradeStream(
   }, [
     symbol,
     isOnline,
+    isOnForeground,
     errorConnection,
     handleChangeLivePrice,
     handleChangeErrorConnection,

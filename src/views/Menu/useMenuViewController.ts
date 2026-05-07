@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AppState, AppStateStatus } from 'react-native';
 import { MenuViewProps } from './types';
 import useMenuViewModel from './useMenuViewModel';
 import { CryptoAPIType } from '../../models/crypto/api/types';
 import { filterCryptos } from '../../utils/filter/filterCryptos';
 import { sortAlphabetically } from '../../utils/sort/sortAlphabetically';
 
-const POLLING_INTERVAL_MS = 3000;
+const POLLING_INTERVAL_MS = 5000;
 const MAX_RETRIES = 3;
+const VISIBLE_COUNT_INITIAL = 10;
+const VISIBLE_COUNT_INCREMENT = 10;
 
 const useMenuViewController = (): MenuViewProps => {
   const {
@@ -16,6 +17,7 @@ const useMenuViewController = (): MenuViewProps => {
     setCryptoCache,
     navigateToCryptoDetail,
     isFocused,
+    isOnForeground,
   } = useMenuViewModel();
   const [cryptos, setCryptos] = useState<CryptoAPIType[]>(
     getCryptoCache() ?? [],
@@ -23,25 +25,15 @@ const useMenuViewController = (): MenuViewProps => {
   const [cryptosFiltered, setCryptosFiltered] = useState<CryptoAPIType[]>([]);
   const [text, setText] = useState<string>('');
   const [alphabetical, setAlphabetical] = useState<boolean>(false);
+  const [visibleCount, setVisibleCount] = useState<number>(
+    VISIBLE_COUNT_INITIAL,
+  );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [errorConnection, setErrorConnection] = useState<boolean>(false);
-  const [isOnForeground, setIsOnForeground] = useState<boolean>(
-    AppState.currentState === 'active',
-  );
   const errorCounterRef = useRef<number>(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const fetchControllerRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener(
-      'change',
-      (state: AppStateStatus) => {
-        handleChangeIsOnForeground(state === 'active');
-      },
-    );
-    return () => subscription.remove();
-  }, []);
 
   useEffect(() => {
     if (errorConnection || !isOnForeground || !isFocused) {
@@ -59,8 +51,8 @@ const useMenuViewController = (): MenuViewProps => {
   }, [errorConnection, isOnForeground, isFocused]);
 
   useEffect(() => {
-    handleFilterData(cryptos, text, alphabetical);
-  }, [cryptos, text, alphabetical]);
+    handleFilterData(cryptos, text, alphabetical, visibleCount);
+  }, [cryptos, text, alphabetical, visibleCount]);
 
   useEffect(() => {
     return () => {
@@ -83,12 +75,12 @@ const useMenuViewController = (): MenuViewProps => {
     setErrorConnection(value);
   };
 
-  const handleChangeIsOnForeground = (value: boolean) => {
-    setIsOnForeground(value);
-  };
-
   const handleChangeCryptosFiltered = (value: CryptoAPIType[]) => {
     setCryptosFiltered(value);
+  };
+
+  const handleChangeVisibleCount = (value: number) => {
+    setVisibleCount(value);
   };
 
   const handleChangeText = useCallback((value: string) => {
@@ -108,10 +100,14 @@ const useMenuViewController = (): MenuViewProps => {
     cryptos: CryptoAPIType[],
     text: string,
     alphabetical: boolean,
+    visibleCount: number,
   ) => {
     const filtered = filterCryptos(cryptos, text);
     const base = text === '' ? cryptos : filtered;
-    handleChangeCryptosFiltered(sortAlphabetically(base, alphabetical));
+    const sorted = sortAlphabetically(base, alphabetical);
+    const final =
+      visibleCount >= cryptos.length ? sorted : sorted.slice(0, visibleCount);
+    handleChangeCryptosFiltered(final);
   };
 
   const clearPollingInterval = () => {
@@ -152,8 +148,14 @@ const useMenuViewController = (): MenuViewProps => {
     handleChangeErrorConnection(false);
   };
 
+  const onEndReached = useCallback(() => {
+    if (visibleCount >= cryptos.length) return;
+    setTimeout(() => {
+      handleChangeVisibleCount(visibleCount + VISIBLE_COUNT_INCREMENT);
+    }, 1500);
+  }, [visibleCount, cryptos.length]);
+
   return {
-    cryptos,
     cryptosFiltered,
     text,
     isLoading,
@@ -163,6 +165,7 @@ const useMenuViewController = (): MenuViewProps => {
     onPressRetry,
     onPressItem: navigateToCryptoDetail,
     onChangeText: handleChangeText,
+    onEndReached,
   };
 };
 

@@ -11,10 +11,12 @@ import {
 } from '../../models/crypto/storage/cryptoStorage';
 import { HomeStackNavigationProps } from '../../navigation/HomeStackNavigator/types';
 import { CryptoItem } from './components/CryptoListItem/types';
+import { useAppStateStore } from '../../models/app/state/store/appStateStore';
 
 const useMenuViewModel = (): MenuViewModelType => {
   const navigation = useNavigation<HomeStackNavigationProps<'Menu'>>();
   const isFocused = useIsFocused();
+  const isOnForeground = useAppStateStore(state => state.isOnForeground);
 
   const getCryptoData = async (
     signal?: AbortSignal,
@@ -40,6 +42,7 @@ const useMenuViewModel = (): MenuViewModelType => {
     setCryptoCache,
     navigateToCryptoDetail,
     isFocused,
+    isOnForeground,
   };
 };
 

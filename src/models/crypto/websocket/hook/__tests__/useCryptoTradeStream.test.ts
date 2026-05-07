@@ -36,7 +36,7 @@ const lastWS = (): MockWS => wsInstances[wsInstances.length - 1];
 describe('useCryptoTradeStream', () => {
   beforeEach(() => {
     wsInstances.length = 0;
-    useAppStateStore.setState({ isOnline: true });
+    useAppStateStore.setState({ isOnline: true, isOnForeground: true });
   });
 
   afterEach(() => {
@@ -50,6 +50,12 @@ describe('useCryptoTradeStream', () => {
 
   it('does not open a WebSocket when offline', () => {
     useAppStateStore.setState({ isOnline: false });
+    renderHook(() => useCryptoTradeStream('BTCUSDT'));
+    expect(wsInstances).toHaveLength(0);
+  });
+
+  it('does not open a WebSocket when in background', () => {
+    useAppStateStore.setState({ isOnForeground: false });
     renderHook(() => useCryptoTradeStream('BTCUSDT'));
     expect(wsInstances).toHaveLength(0);
   });

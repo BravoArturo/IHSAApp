@@ -10,6 +10,7 @@ const keyExtractor = (item: CryptoItem) => item.symbol;
 const CryptoList: React.FC<CryptoListPropsType> = ({
   cryptos,
   onPressItem,
+  onEndReached,
 }) => {
   const renderItem = useCallback(
     ({ item }: { item: CryptoItem }) => (
@@ -24,6 +25,8 @@ const CryptoList: React.FC<CryptoListPropsType> = ({
         data={cryptos}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.5}
         maintainVisibleContentPosition={{
           autoscrollToTopThreshold: 0,
         }}

@@ -101,7 +101,7 @@ describe('useIsOnline', () => {
     });
 
     jest.useFakeTimers();
-    const clearSpy = jest.spyOn(global, 'clearInterval');
+    const clearSpy = jest.spyOn(globalThis, 'clearInterval');
 
     const { unmount } = renderHook(() => useIsOnline());
     unmount();

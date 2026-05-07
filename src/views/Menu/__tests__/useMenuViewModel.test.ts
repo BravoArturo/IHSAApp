@@ -48,16 +48,13 @@ describe('useMenuViewModel', () => {
       });
     });
 
-    it('passes the SYMBOLS constant to getCryptoAPI', async () => {
+    it('calls getCryptoAPI without arguments when no signal is provided', async () => {
       getCryptoAPIMock.mockResolvedValueOnce([]);
 
       const { result } = renderHook(() => useMenuViewModel());
       await result.current.getCryptoData();
 
-      expect(getCryptoAPIMock).toHaveBeenCalledWith(
-        expect.arrayContaining(['BTCUSDT', 'ETHUSDT', 'BNBUSDT']),
-        undefined,
-      );
+      expect(getCryptoAPIMock).toHaveBeenCalledWith(undefined);
     });
 
     it('forwards the AbortSignal to getCryptoAPI', async () => {
@@ -67,10 +64,7 @@ describe('useMenuViewModel', () => {
       const { result } = renderHook(() => useMenuViewModel());
       await result.current.getCryptoData(controller.signal);
 
-      expect(getCryptoAPIMock).toHaveBeenCalledWith(
-        expect.any(Array),
-        controller.signal,
-      );
+      expect(getCryptoAPIMock).toHaveBeenCalledWith(controller.signal);
     });
 
     it('returns AxiosError shape when API rejects with one', async () => {

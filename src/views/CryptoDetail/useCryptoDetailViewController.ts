@@ -1,10 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { LayoutChangeEvent } from 'react-native';
 import { CryptoDetailViewProps, KlinePointType } from './types';
 import useCryptoDetailViewModel from './useCryptoDetailViewModel';
 import { parseKlines } from '../../utils/klines/parseKlines';
 
 const useCryptoDetailViewController = (): CryptoDetailViewProps => {
-  const { params, getCryptoKlinesData } = useCryptoDetailViewModel();
+  const {
+    params,
+    getCryptoKlinesData,
+    livePrice,
+    errorConnection,
+    onPressRetry,
+    widthChart,
+    heightChart,
+    changeWidthChart,
+    changeHeightChart,
+  } = useCryptoDetailViewModel();
   const [klines, setKlines] = useState<KlinePointType[]>([]);
   const [isChartLoading, setIsChartLoading] = useState<boolean>(true);
   const [chartError, setChartError] = useState<boolean>(false);
@@ -21,6 +32,14 @@ const useCryptoDetailViewController = (): CryptoDetailViewProps => {
   const handleChangeChartError = (value: boolean) => {
     setChartError(value);
   };
+
+  const onLayoutChart = useCallback(
+    (event: LayoutChangeEvent) => {
+      changeWidthChart(event.nativeEvent.layout.width);
+      changeHeightChart(event.nativeEvent.layout.height);
+    },
+    [changeWidthChart, changeHeightChart],
+  );
 
   const getAndSetKlines = async () => {
     fetchControllerRef.current?.abort();
@@ -40,7 +59,9 @@ const useCryptoDetailViewController = (): CryptoDetailViewProps => {
     } else {
       handleChangeChartError(true);
     }
-    handleChangeIsChartLoading(false);
+    setTimeout(() => {
+      handleChangeIsChartLoading(false);
+    }, 5000);
   };
 
   useEffect(() => {
@@ -57,6 +78,12 @@ const useCryptoDetailViewController = (): CryptoDetailViewProps => {
     klines,
     isChartLoading,
     chartError,
+    livePrice,
+    errorConnection,
+    onPressRetry,
+    widthChart,
+    heightChart,
+    onLayoutChart,
   };
 };
 
